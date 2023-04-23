@@ -1,0 +1,55 @@
+---
+- name: Install chrony
+  ansible.builtin.apt:
+    pkg: "chrony"
+    install_recommends: false
+    state: present
+
+- name: Configure /etc/chrony/chrony.conf
+  ansible.builtin.template:
+    src: "chrony.conf"
+    dest: "/etc/chrony/chrony.conf"
+    owner: "root"
+    group: "root"
+    mode: "u=rw,g=r,o=r"
+  notify: restart chrony
+  when: chrony_config != ""
+
+- name: Create /etc/chrony/conf.d
+  ansible.builtin.file:
+    path: "/etc/chrony/conf.d/"
+    owner: "root"
+    group: "root"
+    mode: "u=rwx,g=rx,o=rx"
+    state: "directory"
+  when: chrony_config_d | length >= 1
+
+- name: Configure chrony conf.d files
+  ansible.builtin.template:
+    src: "conf.d"
+    dest: "/etc/chrony/conf.d/{{ item.name }}.conf"
+    owner: "root"
+    group: "root"
+    mode: "u=rw,g=r,o=r"
+  notify: restart chrony
+  loop: "{{ chrony_config_d }}"
+  loop_control:
+    label: "conf.d/{{ item.name }}.conf"
+
+- name: Create /etc/chrony/sources.d
+  ansible.builtin.file:
+    path: "/etc/chrony/sources.d/"
+    owner: "root"
+    group: "root"
+    mode: "u=rwx,g=rx,o=rx"
+    state: "directory"
+  when: chrony_sources | length >= 1
+
+- name: Configure chrony ntp sources
+  ansible.builtin.template:
+    src: "sources.d"
+    dest: "/etc/chrony/sources.d/ansible.sources"
+    owner: "root"
+    group: "root"
+    mode: "u=rw,g=r,o=r"
+  notify: reload chrony sources
