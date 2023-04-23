@@ -53,3 +53,14 @@
     group: "root"
     mode: "u=rw,g=r,o=r"
   notify: reload chrony sources
+
+- ansible.builtin.cmd:
+    cmd: "systemctl restart chrony"
+  failed_when: false
+
+- ansible.builtin.cmd:
+    cmd: "journalctl -a"
+  register: _debug_out
+
+- debug:
+    var: _debug_out.stdout
