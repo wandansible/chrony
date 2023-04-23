@@ -1,0 +1,36 @@
+---
+argument_specs:
+  main:
+    short_description: Install and configure chrony NTP daemon
+    description: |
+      Installs chrony NTP daemon and allows configuration of
+      chrony.conf, conf.d/*.conf and NTP sources.
+    options:
+      chrony_config:
+        description: |
+          Contents of the chrony.conf configuration file, or empty string to leave file as is
+        type: str
+        default: ""
+
+      chrony_config_d:
+        description: List of extra chrony conf.d configuration files to create
+        type: list
+        elements: dict
+        default: []
+        options:
+          name:
+            description: Name of the chrony conf.d configuration file
+            type: str
+            required: true
+          config:
+            description: Contents of the chrony conf.d configuration file
+            type: str
+            required: true
+
+      chrony_sources:
+        description: |
+          List of chrony NTP sources.
+          Each entry in the list must contain a "peer", "pool" or "server" directive.
+        type: list
+        elements: str
+        default: []
