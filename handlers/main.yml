@@ -1,0 +1,9 @@
+---
+- name: restart chrony
+  ansible.builtin.service:
+    name: chrony
+    state: restarted
+
+- name: reload chrony sources
+  ansible.builtin.command:
+    cmd: chronyc reload sources
