@@ -4,19 +4,20 @@
     name: chrony
     state: restarted
 
-- name: chronyc sources reload
-  ansible.builtin.command:
-    cmd: chronyc reload sources
-  listen: reload chrony sources
-  when: >
-    (ansible_distribution == "Ubuntu" and ansible_distribution_version is version('22.04', '>='))
-    or (ansible_distribution == "Debian" and ansible_distribution_version is version('11', '>='))
-
 - name: chrony sources restart
   ansible.builtin.service:
     name: chrony
     state: restarted
   listen: reload chrony sources
-  when: >
-    (ansible_distribution == "Ubuntu" and ansible_distribution_version is version('22.04', '<'))
-    or (ansible_distribution == "Debian" and ansible_distribution_version is version('11', '<'))
+  when:
+    - ansible_distribution_major_version | int
+    - (ansible_distribution == "Ubuntu" and ansible_distribution_version is version("21.10", "<="))
+      or
+      (ansible_distribution == "Debian" and ansible_distribution_major_version is version("10", "<="))
+  register: _chrony_restart
+
+- name: chronyc sources reload
+  ansible.builtin.command:
+    cmd: chronyc reload sources
+  listen: reload chrony sources
+  when: _chrony_restart is skipped
