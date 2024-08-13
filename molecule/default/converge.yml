@@ -8,12 +8,12 @@
       vars:
         chrony_modern: >-
           {{ true if
-          (ansible_distribution == "Ubuntu" and ansible_distribution_version is version('22.04', '>=')) or
-          (ansible_distribution == "Debian" and ansible_distribution_major_version is version('11', '>='))
-          else false }}
+             (ansible_distribution == "Ubuntu" and ansible_distribution_version is version('22.04', '>=')) or
+             (ansible_distribution == "Debian" and ansible_distribution_major_version is version('11', '>='))
+             else false }}
 
         chrony_config: |
-          {% if chrony_modern %}
+          {% if chrony_modern | bool %}
           # Include configuration files found in /etc/chrony/conf.d.
           confdir /etc/chrony/conf.d
 
