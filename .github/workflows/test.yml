@@ -33,8 +33,6 @@ jobs:
           python-version: '3.x'
       - name: Install test dependencies
         run: pip3 install -r test-requirements.txt
-      - name: Disable apparmor
-        run: sudo aa-teardown
       - name: Run molecule
         run: molecule test
         env:
