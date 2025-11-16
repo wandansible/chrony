@@ -50,6 +50,10 @@ jobs:
         uses: wandansible/action-ansible-problem-matchers@v1
       - name: Install test dependencies
         run: pip3 install -r test-requirements.txt
+      - name: Disable apparmor profile
+        run: |
+          sudo ln -s /etc/apparmor.d/usr.sbin.chronyd /etc/apparmor.d/disable/
+          sudo apparmor_parser -R /etc/apparmor.d/usr.sbin.chronyd
       - name: Run molecule
         run: molecule test
         env:
