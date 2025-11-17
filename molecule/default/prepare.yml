@@ -1,0 +1,21 @@
+---
+- name: Prepare
+  hosts: all
+  tasks:
+    - name: Create systemd drop-in directory
+      ansible.builtin.file:
+        path: /etc/systemd/system/chrony.service.d/
+        state: directory
+        owner: root
+        group: root
+        mode: u=rwx,g=rx,o=rx
+
+    - name: Allow chrony to start on containers
+      ansible.builtin.copy:
+        content: |-
+          [Unit]
+          ConditionVirtualization=
+        dest: /etc/systemd/system/chrony.service.d/override.conf
+        owner: root
+        group: root
+        mode: u=rw,g=r,o=r
