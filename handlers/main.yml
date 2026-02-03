@@ -10,10 +10,14 @@
     state: restarted
   listen: reload chrony sources
   when:
-    - ansible_distribution_major_version | int > 0
-    - (ansible_distribution == "Ubuntu" and ansible_distribution_version is version("21.10", "<="))
-      or
-      (ansible_distribution == "Debian" and ansible_distribution_major_version is version("10", "<="))
+    - ansible_facts.distribution_major_version | int > 0
+    - (
+      ansible_facts.distribution == "Ubuntu"
+      and ansible_facts.distribution_version is version("21.10", "<=")
+      ) or (
+      ansible_facts.distribution == "Debian"
+      and ansible_facts.distribution_major_version is version("10", "<=")
+      )
   register: _chrony_restart
 
 - name: chronyc sources reload
